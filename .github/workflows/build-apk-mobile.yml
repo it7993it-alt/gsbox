@@ -1,0 +1,66 @@
+# GSBOX 모바일 앱 — gsbox.kr/m (창고예약·주차이용 신청, 창고/주차 시스템 로그인)
+# 기존 GSBOX 앱과 별도 앱으로 설치됩니다 (패키지: kr.gsbox.mobile)
+# APK 받기: Actions → "Build APK (GSBOX 모바일)" → 최신 실행 → Artifacts 의 gsbox-mobile-apk
+name: Build APK (GSBOX 모바일)
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Generate Android platform folder
+        run: flutter create --platforms=android --project-name gsbox_app --org kr.gsbox .
+
+      - name: 앱 이름 · 패키지 · 권한 설정
+        run: |
+          F=android/app/src/main/AndroidManifest.xml
+          grep -q 'android.permission.INTERNET' $F || sed -i 's#<manifest[^>]*>#&\n    <uses-permission android:name="android.permission.INTERNET"/>#' $F
+          sed -i 's#android:label="[^"]*"#android:label="GSBOX 모바일"#' $F
+          for G in android/app/build.gradle.kts android/app/build.gradle; do
+            [ -f "$G" ] || continue
+            sed -i -E 's#applicationId[ =]+"[^"]+"#applicationId = "kr.gsbox.mobile"#' "$G"
+            sed -i -E "s#applicationId[ ]+'[^']+'#applicationId 'kr.gsbox.mobile'#" "$G"
+            grep -n applicationId "$G"
+          done
+          grep -n 'android:label' $F
+
+      - run: flutter pub get
+      - run: flutter build apk --release --dart-define=HOME_URL=https://gsbox.kr/m/ "--dart-define=APP_TITLE=GSBOX 모바일"
+
+      - name: 파일 이름 정리
+        run: cp build/app/outputs/flutter-apk/app-release.apk GSBOX-mobile.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gsbox-mobile-apk
+          path: GSBOX-mobile.apk
+
+      # main 에 반영되거나 버튼으로 실행하면 고정 주소로 배포 (PR 빌드는 배포하지 않음)
+      #   https://github.com/it7993it-alt/gsbox/releases/download/mobile-apk/GSBOX-mobile.apk
+      - name: 고정 다운로드 주소에 올리기 (Releases)
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view mobile-apk >/dev/null 2>&1 || gh release create mobile-apk --title "GSBOX 모바일 앱" --notes "gsbox.kr/m 을 여는 GSBOX 모바일 앱. main 에 반영될 때마다 최신 APK 로 교체됩니다." --latest
+          gh release upload mobile-apk GSBOX-mobile.apk --clobber
+          echo "✅ https://github.com/${{ github.repository }}/releases/download/mobile-apk/GSBOX-mobile.apk"
