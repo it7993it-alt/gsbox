@@ -43,6 +43,9 @@ jobs:
           done
           grep -n 'android:label' $F
 
+      - name: 앱 아이콘 (gsbox.kr/m 왼쪽 위 G 로고와 동일)
+        run: cp -r assets/mobile_icon/res/. android/app/src/main/res/
+
       - run: flutter pub get
       - run: flutter build apk --release --dart-define=HOME_URL=https://gsbox.kr/m/ "--dart-define=APP_TITLE=GSBOX 모바일"
 
