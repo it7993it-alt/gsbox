@@ -1,4 +1,4 @@
-# GSBOX 모바일 앱 — gsbox.kr/m (창고예약·주차이용 신청, 창고/주차 시스템 로그인)
+# GSBOX 모바일 앱 — gsbox.kr 을 엶 (휴대폰 접속은 사이트가 /m 화면으로 보여 줌)
 # 기존 GSBOX 앱과 별도 앱으로 설치됩니다 (패키지: kr.gsbox.mobile)
 # APK 받기: Actions → "Build APK (GSBOX 모바일)" → 최신 실행 → Artifacts 의 gsbox-mobile-apk
 name: Build APK (GSBOX 모바일)
@@ -47,7 +47,7 @@ jobs:
         run: cp -r assets/mobile_icon/res/. android/app/src/main/res/
 
       - run: flutter pub get
-      - run: flutter build apk --release --dart-define=HOME_URL=https://gsbox.kr/m/ "--dart-define=APP_TITLE=GSBOX 모바일"
+      - run: flutter build apk --release --dart-define=HOME_URL=https://gsbox.kr/ "--dart-define=APP_TITLE=GSBOX 모바일"
 
       - name: 파일 이름 정리
         run: cp build/app/outputs/flutter-apk/app-release.apk GSBOX-mobile.apk
