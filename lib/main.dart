@@ -3,7 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-const String kHomeUrl = 'https://gsbox.kr';
+// 빌드할 때 --dart-define 으로 바꿀 수 있음 (기본값 = 기존 GSBOX 앱)
+//   GSBOX 모바일 앱: --dart-define=HOME_URL=https://gsbox.kr/m/ --dart-define=APP_TITLE='GSBOX 모바일'
+const String kHomeUrl = String.fromEnvironment('HOME_URL', defaultValue: 'https://gsbox.kr');
+const String kAppTitle = String.fromEnvironment('APP_TITLE', defaultValue: 'GSBOX');
 const String kHost = 'gsbox.kr';
 
 void main() {
@@ -17,7 +20,7 @@ class GsBoxApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GSBOX',
+      title: kAppTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blue),
       home: const WebViewPage(),
