@@ -14,4 +14,5 @@ GitHub → Actions → 최신 "Build APK" 실행 → 아래 Artifacts의 `gsbox-
 창고예약·주차이용 신청과 창고/주차 시스템 로그인이 있는 `gsbox.kr/m` 을 여는 별도 앱입니다.
 기존 GSBOX 앱과 따로 설치됩니다 (패키지 `kr.gsbox.mobile`).
 - `.github/workflows/build-apk-mobile.yml` — PR·main 에 올라오면 자동 빌드 (Actions 에서 버튼으로도 실행 가능)
-- APK 받기: Actions → "Build APK (GSBOX 모바일)" → 최신 실행 → Artifacts 의 `gsbox-mobile-apk`
+- APK 받기(고정 주소): https://github.com/it7993it-alt/gsbox/releases/download/mobile-apk/GSBOX-mobile.apk
+  main 에 반영될 때마다 최신 APK 로 바뀝니다. gsbox.kr/m 의 앱 설치 버튼이 이 주소를 씁니다.
